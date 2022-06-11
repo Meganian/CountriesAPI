@@ -27,7 +27,7 @@ const CustomSelect = ({ onUpdateRegion }) => {
   return ( 
     <>
     <Box sx={{ minWidth: '220px' }}>
-      <FormControl fullWidth>
+      <FormControl fullWidth variant="standard">
         <InputLabel id="region-select-label" style={themeStyle}>Region</InputLabel>
         <Select
           labelId="region-select-label"

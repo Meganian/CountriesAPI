@@ -2,11 +2,10 @@ import { useState } from 'react';
 import Head from 'next/head'
 import Link from 'next/link'
 import CountriesCard from './CounntriesCard'
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid'
 import CustomSelect from './CustomSelect'
 import CustomInput from './CustomInput'
-import { fetchData } from './fetchData'
+import { fetchData } from '../helpers/fetchData'
 
 export const getStaticProps = async() => {
 
@@ -37,7 +36,7 @@ export default function Home({ countriesData }) {
   }
        
   return (
-    <Container maxWidth="lg">
+    <>
       <Head>
           <title>Countries</title>
           <meta name="keywords" content="Countries" />
@@ -70,6 +69,6 @@ export default function Home({ countriesData }) {
 
           ))}
       </Grid>
-    </Container>
+    </>
   )
 }

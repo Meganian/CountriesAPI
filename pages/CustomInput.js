@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import { AiOutlineSearch } from 'react-icons/ai'
 import { ThemeContext } from '../context/ThemeContext'
 
+
 const CustomInput = ({ onUpdateCountry }) => {
   const [country, setCountry]= useState('')
   const theme = useContext(ThemeContext)
@@ -14,7 +15,8 @@ const CustomInput = ({ onUpdateCountry }) => {
     backgroundColor: theme.isLightTheme ?  'hsl(209, 23%, 22%)':'hsl(0, 0%, 98%)',
     color: theme.isLightTheme ?  'hsl(0, 0%, 100%)' : 'hsl(209, 23%, 22%)',
     borderColor: 'hsl(209, 23%, 22%)',
-    textTransform : 'capitalize'
+    textTransform : 'capitalize',
+    label:{ color: theme.isLightTheme ?  'hsl(0, 0%, 100%)' : 'hsl(209, 23%, 22%)' }
   }
 
   /* New React18 feature, with useTransition we can set high priority for input text, 
@@ -29,7 +31,6 @@ const CustomInput = ({ onUpdateCountry }) => {
     }) 
   }
   return ( 
-    <>
     <FormControl variant="standard">
         <InputLabel htmlFor="input-with-icon-adornment" style={themeStyle}>
           Search for a country...
@@ -45,7 +46,7 @@ const CustomInput = ({ onUpdateCountry }) => {
             </InputAdornment>
           }
         />
-      </FormControl></>
+      </FormControl>     
    );
 }
  

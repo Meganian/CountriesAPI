@@ -1,9 +1,10 @@
 import { useContext } from 'react';
 import Navbar from './Navbar'
+import Container from '@mui/material/Container';
 import { ThemeContext } from '../context/ThemeContext'
 
 
-const Layout = ({children}) => {
+const Layout = ({ children }) => {
   const theme = useContext(ThemeContext)
 
   const toggleTheme = () => {
@@ -18,7 +19,11 @@ const Layout = ({children}) => {
   return ( 
     <div style={themeStyle}>
       <Navbar toggleTheme={toggleTheme} mode={theme.isLightTheme}/>
-      {children}
+      <main>
+        <Container maxWidth="lg">
+          {children}
+        </Container>
+      </main>
     </div> 
   );
 }

@@ -1,5 +1,4 @@
 import Image from 'next/image'
-
 import { useContext } from 'react';
 import { useRouter } from 'next/router'
 import Box from '@mui/material/Box'
@@ -8,13 +7,14 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { MdOutlineKeyboardBackspace } from 'react-icons/md'
 import { v4 as uuidv4 } from 'uuid'
-import { fetchData } from './fetchData'
+import { fetchData } from '../helpers/fetchData'
 import { ThemeContext } from '../context/ThemeContext'
 
 export const getStaticPaths = async () => {
 
-  const data = await fetchData('https://restcountries.com/v3.1/all')
-
+  //const data = await fetchData('https://restcountries.com/v3.1/all')
+  const res = await fetch('https://restcountries.com/v3.1/all')
+  const data = await res.json()
   
   const paths = data.map(ctr => {
     return {
@@ -33,13 +33,16 @@ export const getStaticProps = async (context) => {
 
   const data = await fetchData(`https://restcountries.com/v3.1/name/${id}`)
 
-  let codes = data[0].borders.map(borderCoun => borderCoun).join()
-  const dataCodes = await fetchData(`https://restcountries.com/v3.1/alpha?codes=${codes}`)
+
+  let codes = await data[0].borders.map(borderCoun => borderCoun).join()
+  //const dataCodes = await fetchData(`https://restcountries.com/v3.1/alpha?codes=${codes}`)
+  const resc = await fetch(`https://restcountries.com/v3.1/alpha?codes=${codes}`)
+  const dataCodes = await resc.json()
 
   let mergedData = {...data, dataCodes }
 
   return {
-    props: { country: mergedData }
+    props: { country: {...data, dataCodes } }
   }
 }
 
@@ -51,9 +54,11 @@ const CountryDetails = ({ country }) => {
     backgroundColor: theme.isLightTheme ?  'hsl(209, 23%, 22%)':'hsl(0, 0%, 98%)',
     color: theme.isLightTheme ?  'hsl(0, 0%, 100%)' : 'hsl(209, 23%, 22%)',
     borderColor: 'hsl(209, 23%, 22%)',
-    textTransform : 'capitalize'
+    textTransform : 'capitalize',
+    fontSize: '0.6325rem'
+
   }
-  console.log('theme from details', country[0].languages)
+  console.log('theme from details', country)
 
   const img = country[0] && country[0].cca2.toLowerCase()  
 
@@ -63,8 +68,8 @@ const CountryDetails = ({ country }) => {
 
 
   return ( 
-    <>
-      <Box>
+    <Box >
+      <Box sx={{ margin: '44px 0 34px'}}>
         <Button 
           variant="outlined" 
           startIcon={<MdOutlineKeyboardBackspace />}
@@ -75,7 +80,7 @@ const CountryDetails = ({ country }) => {
         </Button>  
       </Box>
       <Stack direction={{ xs: 'column', md: 'row' }}>
-        <Box sx={{ width:'50%', height: 300, }} >
+        <Box sx={{ width:'100%', height: 300 }} >
           <div style={{width: '100%', height: '100%', position: 'relative'}}>
             <Image
               alt="Mountains"
@@ -87,13 +92,13 @@ const CountryDetails = ({ country }) => {
           </div>
         </Box>
         <Box>
-          <Box sx={{ width:'50%', p:2  }}> 
+          <Box sx={{ width:'100%', p:2  }}> 
             <Typography gutterBottom variant="h4" component="div">
               {country[0].name.common}
             </Typography>
           </Box>
           <Stack direction={{ xs: 'column', md: 'row' }}>
-            <Box sx={{ width:'50%', p:2  }}>                   
+            <Box sx={{ width:'100%', p:2  }}>                   
               <Typography variant="body2">
                 <strong>Native Name:</strong> {country[0].name.common}
               </Typography>
@@ -110,7 +115,7 @@ const CountryDetails = ({ country }) => {
                 <strong>Capital:</strong> {country[0].capital}
               </Typography>           
             </Box>
-            <Box sx={{ width:'50%', p:2 }}>
+            <Box sx={{ width:'100%', p:2 }}>
               <Typography variant="body2">
                 <strong>Top Level Domain:</strong> {country[0].tld}
               </Typography>
@@ -133,7 +138,7 @@ const CountryDetails = ({ country }) => {
                   key={border.fifa}
                   variant="outlined" 
                   size="small"
-                  sx={{marginRight:1 }}
+                  sx={{marginRight:1, marginBottom:'2px' }}
                   onClick={() => router.push(`/${name}`)}
                   style={themeStyle}
                   >    
@@ -143,7 +148,7 @@ const CountryDetails = ({ country }) => {
           </Box>
         </Box>
       </Stack>
-    </>
+    </Box>
    );
 }
  
