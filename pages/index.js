@@ -5,11 +5,11 @@ import CountriesCard from './CounntriesCard'
 import Grid from '@mui/material/Grid'
 import CustomSelect from './CustomSelect'
 import CustomInput from './CustomInput'
+import { fetchData } from './fetchData'
 
 export const getStaticProps = async() => {
 
-  const res = await fetch('https://restcountries.com/v3.1/all')
-  const data = await res.json();
+  const data = await fetchData('https://restcountries.com/v3.1/all')
 
   return {
     props: {

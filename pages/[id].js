@@ -1,16 +1,17 @@
 import Image from 'next/image'
 import styles from '../styles/CountryDetails.module.css'
 import { useRouter } from 'next/router'
-import Box from '@mui/material/Box';
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { MdOutlineKeyboardBackspace } from 'react-icons/md';
-import { v4 as uuidv4 } from 'uuid';
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import { MdOutlineKeyboardBackspace } from 'react-icons/md'
+import { v4 as uuidv4 } from 'uuid'
+import { fetchData } from './fetchData'
 
 export const getStaticPaths = async () => {
-  const res = await fetch('https://restcountries.com/v3.1/all')
-  const data = await res.json()
+
+  const data = await fetchData('https://restcountries.com/v3.1/all')
 
   const paths = data.map(ctr => {
     return {
@@ -26,16 +27,24 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async (context) => {
   const id = context.params.id;
-  const res = await fetch(`https://restcountries.com/v3.1/name/${id}`)
+
+  var handleError = function (err) {
+    console.warn(err);
+    return new Response(JSON.stringify({
+        code: 400,
+        message: 'Stupid network Error'
+    }));
+  };
+
+  const res = await fetch(`https://restcountries.com/v3.1/name/${id}`).catch(error => {
+    console.warn(err);
+    return new Response(JSON.stringify({
+        code: 400,
+        message: 'Stupid network Error'
+    }));
+});
   const data = await res.json()
  
-  //let codes = data[0].borders.map(borderCoun => borderCoun).join()
-
-  //const resCodes = await fetch(`https://restcountries.com/v3.1/alpha?codes=${codes}`)
-  //const dataCodes = await resCodes.json()
-
-  //let mergedData = {...data, dataCodes }
-
   return {
     props: { country: data }
   }
@@ -43,7 +52,7 @@ export const getStaticProps = async (context) => {
 
 const CountryDetails = ({ country }) => {
   const router = useRouter()
-  const img = country && country[0].cca2.toLowerCase()  
+  const img = country[0] && country[0].cca2.toLowerCase()  
 
     const language = country[0].currencies && Object.keys(country[0].languages)
               .map((v,idx)=> idx+2 == country[0].languages.length ? v : v + ', ')
