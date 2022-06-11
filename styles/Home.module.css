@@ -31,6 +31,8 @@
 .title a {
   color: #0070f3;
   text-decoration: none;
+  font-family: "Nunito", sans-serif;
+  font-weight: 400;
 }
 
 .title a:hover,
