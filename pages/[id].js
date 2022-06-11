@@ -42,12 +42,14 @@ export const getStaticProps = async (context) => {
 }
 
 const CountryDetails = ({ country }) => {
-  
   const router = useRouter()
-  const img = country[0].cca2.toLowerCase()  
-  const language = Object.values(country[0].languages)
-  .map((v,idx)=> idx+2 == country[0].languages.length ? v : v + ', ')
-  const cur = Object.values(country[0].currencies).map( val => <span key={uuidv4()}>{val.name}</span> )
+  const img = country && country[0].cca2.toLowerCase()  
+
+    const language = country[0].currencies && Object.keys(country[0].languages)
+              .map((v,idx)=> idx+2 == country[0].languages.length ? v : v + ', ')
+    const cur = country[0].currencies && Object.keys(country[0].currencies).map( val => <span key={uuidv4()}>{val.name}</span> )
+
+
 
 
   return ( 
