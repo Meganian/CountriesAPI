@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Head from 'next/Head'
+import Head from 'next/head'
 import Link from 'next/link'
 import CountriesCard from './CounntriesCard'
 import Grid from '@mui/material/Grid'
