@@ -33,9 +33,8 @@ export const getStaticProps = async (context) => {
 
   const data = await fetchData(`https://restcountries.com/v3.1/name/${id}`)
 
+  let codes = await data[0].borders?.map(borderCoun => borderCoun).join()
 
-  let codes = await data[0].borders.map(borderCoun => borderCoun).join()
-  //const dataCodes = await fetchData(`https://restcountries.com/v3.1/alpha?codes=${codes}`)
   const resc = await fetch(`https://restcountries.com/v3.1/alpha?codes=${codes}`)
   const dataCodes = await resc.json()
 
@@ -131,7 +130,7 @@ const CountryDetails = ({ country }) => {
             <Typography gutterBottom variant="body2" component="span" sx={{ pr:2  }}>
               Border Countries:
             </Typography>
-            {country.dataCodes && country.dataCodes.map(border => {
+            {country[0].borders && country.dataCodes.map(border => {
               const name = border.name.common
               return (
                 <Button 
