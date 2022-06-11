@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Head from 'next/head'
 import Link from 'next/link'
 import CountriesCard from './CounntriesCard'
+import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid'
 import CustomSelect from './CustomSelect'
 import CustomInput from './CustomInput'
@@ -36,39 +37,39 @@ export default function Home({ countriesData }) {
   }
        
   return (
-    <>
-    <Head>
-        <title>Countries</title>
-        <meta name="keywords" content="Countries" />
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <meta name="description" content="Countries API" />
-    </Head>
-    <Grid container spacing={{ xs: 2, md: 3 }} style={{paddingTop:'24px', paddingBottom:'24px'}}>
-      <Grid item xs={12} sm={12} md={6} >
-        <CustomInput onUpdateCountry={onUpdateCountry}/>
-      </Grid>
-      <Grid item xs={12} sm={12} md={6}>
-        <CustomSelect onUpdateRegion={onUpdateRegion}/>
-      </Grid>
-    </Grid>
-
-    <Grid container spacing={{ xs: 2, md: 3 }} >
-      {countries && countries.map(country => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={country.cca2}>
-          <Link href={'/'+ country.name.common}>
-              <a>
-                <CountriesCard 
-                img={country.flags.png} 
-                name={country.name.common}
-                population={country.population.toLocaleString("en-US")}
-                region={country.region}
-                capital={country.capital} />            
-              </a>
-            </Link>  
+    <Container maxWidth="lg">
+      <Head>
+          <title>Countries</title>
+          <meta name="keywords" content="Countries" />
+          <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+          <meta name="description" content="Countries API" />
+      </Head>
+      <Grid container spacing={{ xs: 2, md: 3 }} style={{ padding:'24px 0' }}>
+        <Grid item xs={12} sm={12} md={6} >
+          <CustomInput onUpdateCountry={onUpdateCountry}/>
         </Grid>
+        <Grid item xs={12} sm={12} md={6}>
+          <CustomSelect onUpdateRegion={onUpdateRegion}/>
+        </Grid>
+      </Grid>
 
-        ))}
-    </Grid>
-    </>
+      <Grid container spacing={{ xs: 2, md: 3 }} >
+        {countries && countries.map(country => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={country.cca2}>
+            <Link href={'/'+ country.name.common}>
+                <a>
+                  <CountriesCard 
+                  img={country.flags.png} 
+                  name={country.name.common}
+                  population={country.population.toLocaleString("en-US")}
+                  region={country.region}
+                  capital={country.capital} />            
+                </a>
+              </Link>  
+          </Grid>
+
+          ))}
+      </Grid>
+    </Container>
   )
 }

@@ -1,5 +1,6 @@
 import Image from 'next/image'
-import styles from '../styles/CountryDetails.module.css'
+
+import { useContext } from 'react';
 import { useRouter } from 'next/router'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -8,11 +9,13 @@ import Typography from '@mui/material/Typography'
 import { MdOutlineKeyboardBackspace } from 'react-icons/md'
 import { v4 as uuidv4 } from 'uuid'
 import { fetchData } from './fetchData'
+import { ThemeContext } from '../context/ThemeContext'
 
 export const getStaticPaths = async () => {
 
   const data = await fetchData('https://restcountries.com/v3.1/all')
 
+  
   const paths = data.map(ctr => {
     return {
       params: { id: ctr.name.common.toString() }
@@ -28,37 +31,35 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async (context) => {
   const id = context.params.id;
 
-  var handleError = function (err) {
-    console.warn(err);
-    return new Response(JSON.stringify({
-        code: 400,
-        message: 'Stupid network Error'
-    }));
-  };
+  const data = await fetchData(`https://restcountries.com/v3.1/name/${id}`)
 
-  const res = await fetch(`https://restcountries.com/v3.1/name/${id}`).catch(error => {
-    console.warn(err);
-    return new Response(JSON.stringify({
-        code: 400,
-        message: 'Stupid network Error'
-    }));
-});
-  const data = await res.json()
- 
+  let codes = data[0].borders.map(borderCoun => borderCoun).join()
+  const dataCodes = await fetchData(`https://restcountries.com/v3.1/alpha?codes=${codes}`)
+
+  let mergedData = {...data, dataCodes }
+
   return {
-    props: { country: data }
+    props: { country: mergedData }
   }
 }
 
 const CountryDetails = ({ country }) => {
   const router = useRouter()
+  const theme = useContext(ThemeContext)
+
+  const themeStyle = {
+    backgroundColor: theme.isLightTheme ?  'hsl(209, 23%, 22%)':'hsl(0, 0%, 98%)',
+    color: theme.isLightTheme ?  'hsl(0, 0%, 100%)' : 'hsl(209, 23%, 22%)',
+    borderColor: 'hsl(209, 23%, 22%)',
+    textTransform : 'capitalize'
+  }
+  console.log('theme from details', country[0].languages)
+
   const img = country[0] && country[0].cca2.toLowerCase()  
 
-    const language = country[0].currencies && Object.keys(country[0].languages)
-              .map((v,idx)=> idx+2 == country[0].languages.length ? v : v + ', ')
-    const cur = country[0].currencies && Object.keys(country[0].currencies).map( val => <span key={uuidv4()}>{val.name}</span> )
-
-
+  const language = country[0].currencies && Object.keys(country[0].languages)
+              .map((v,idx) =>  v + ', ')
+  const cur = country[0].currencies && Object.keys(country[0].currencies).map( val => <span key={uuidv4()}>{val.name}</span> )
 
 
   return ( 
@@ -67,22 +68,15 @@ const CountryDetails = ({ country }) => {
         <Button 
           variant="outlined" 
           startIcon={<MdOutlineKeyboardBackspace />}
+          style={themeStyle}
           onClick={() => router.back()}
           >    
           Back
         </Button>  
       </Box>
-
-
       <Stack direction={{ xs: 'column', md: 'row' }}>
-        <Box
-          sx={{
-            width:'50%',
-            height: 300,
-
-          }}
-        >
-          <div className={styles.flag} style={{width: '100%', height: '100%', position: 'relative'}}>
+        <Box sx={{ width:'50%', height: 300, }} >
+          <div style={{width: '100%', height: '100%', position: 'relative'}}>
             <Image
               alt="Mountains"
               src={`https://flagcdn.com/w320/${img}.png`}
@@ -126,14 +120,10 @@ const CountryDetails = ({ country }) => {
               <Typography variant="body2">
                 <strong>Languages:</strong> {language}
               </Typography>
-            </Box>
-            
-
-
-            
+            </Box>       
           </Stack>
           <Box sx={{ p:2  }}>
-            <Typography gutterBottom variant="body2" component="span">
+            <Typography gutterBottom variant="body2" component="span" sx={{ pr:2  }}>
               Border Countries:
             </Typography>
             {country.dataCodes && country.dataCodes.map(border => {
@@ -145,6 +135,7 @@ const CountryDetails = ({ country }) => {
                   size="small"
                   sx={{marginRight:1 }}
                   onClick={() => router.push(`/${name}`)}
+                  style={themeStyle}
                   >    
                   {name}
                 </Button> )
